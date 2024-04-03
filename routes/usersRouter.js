@@ -3,8 +3,10 @@ import controllers from "../controllers/usersControllers.js";
 import validateBody from "../helpers/validateBody.js";
 import { authSchema, subscriptionSchema } from "../models/user.js";
 import { authenticate } from "../helpers/authenticate.js";
+import { upload } from "../helpers/upload.js";
 
-const { register, login, logout, current, subscription } = controllers;
+const { register, login, logout, current, subscription, updateAvatar } =
+  controllers;
 
 const usersRouter = express.Router();
 
@@ -17,6 +19,12 @@ usersRouter.patch(
   authenticate,
   validateBody(subscriptionSchema),
   subscription,
+);
+usersRouter.patch(
+  "/avatars",
+  authenticate,
+  upload.single("avatar"),
+  updateAvatar,
 );
 
 export default usersRouter;
