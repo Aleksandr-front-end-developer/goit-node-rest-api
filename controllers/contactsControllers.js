@@ -12,19 +12,19 @@ const getAllContacts = async (req, res) => {
     const result = await Contact.find({ owner, favorite: true }, "", {
       skip,
       limit,
-    }).populate("owner", "email");
+    });
     res.json(result);
   } else if (favorite === "false") {
     const result = await Contact.find({ owner, favorite: false }, "", {
       skip,
       limit,
-    }).populate("owner", "email");
+    });
     res.json(result);
   } else {
     const result = await Contact.find({ owner }, "", {
       skip,
       limit,
-    }).populate("owner", "email");
+    });
     res.json(result);
   }
 };
