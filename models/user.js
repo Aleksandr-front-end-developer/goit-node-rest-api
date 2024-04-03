@@ -32,6 +32,9 @@ export const authSchema = Joi.object({
   subscription: Joi.string(),
   token: Joi.string(),
 });
+export const subscriptionSchema = Joi.object({
+  subscription: Joi.string().valid("starter", "pro", "business"),
+});
 
 userSchema.post("save", handleMongooseError);
 

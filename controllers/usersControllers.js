@@ -47,6 +47,7 @@ const login = async (req, res) => {
   };
 
   const token = jwt.sign(payload, SECRET_KEY, { expiresIn: "24h" });
+
   await User.findByIdAndUpdate(user._id, { token });
   res.json({
     token,
@@ -69,11 +70,33 @@ const current = async (req, res) => {
     subscription,
   });
 };
+const subscription = async (req, res) => {
+  if (Object.keys(req.body).length === 0) {
+    throw HttpError(400, "Body must have at least one field");
+  }
+  const { _id } = req.user;
+  const { subscription } = req.body;
+  await User.findByIdAndUpdate(_id, { subscription });
+
+  const result = await User.findOneAndUpdate({ _id }, req.body, {
+    new: true,
+  });
+
+  if (!result) {
+    throw HttpError(404);
+  }
+
+  res.status(200).json({
+    email: req.user.email,
+    subscription,
+  });
+};
 
 const controllers = {
   register: ctrlWrapper(register),
   login: ctrlWrapper(login),
   logout: ctrlWrapper(logout),
   current: ctrlWrapper(current),
+  subscription: ctrlWrapper(subscription),
 };
 export default controllers;
