@@ -8,6 +8,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 import Jimp from "jimp";
 import fs from "fs/promises";
+import gravatar from "gravatar";
 
 dotenv.config();
 
@@ -26,8 +27,13 @@ const register = async (req, res) => {
   }
 
   const hashPassword = await bcrypt.hash(password, 10);
+  const avatarURL = gravatar.url(email);
 
-  const newUser = await User.create({ ...req.body, password: hashPassword });
+  const newUser = await User.create({
+    ...req.body,
+    password: hashPassword,
+    avatarURL,
+  });
   res.status(201).json({
     user: {
       email: newUser.email,
@@ -105,7 +111,7 @@ const subscription = async (req, res) => {
 const updateAvatar = async (req, res) => {
   const { _id } = req.user;
   if (!req.file) {
-    throw HttpError(400);
+    throw HttpError(400, "A file must be attached");
   }
   const { path: tempUpload, originalname, mimetype } = req.file;
   const [_, fileFormat] = mimetype.split("/");
